@@ -241,7 +241,7 @@ Try {
 
 ## <Perform Uninstallation tasks here>
 
-# 1. Versuche Registry nach MSI GUID zu durchsuchen
+# 1. Searching Registry for MSI GUID
 $registryApp = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*' |
     Where-Object { $_.DisplayName -like "*FortiClient*" -and $_.UninstallString -match "MsiExec\.exe\s+/I\{(.+?)\}" } |
     Select-Object -First 1
@@ -251,13 +251,13 @@ If ($registryApp) {
     Write-Log -Message "Deinstalliere FortiClient per MSI-GUID: {$guid}" -Severity 1
     Execute-MSI -Action Uninstall -Path "{$guid}"
 }
-# 2. Fallback: Deinstalliere über uninst.exe, falls vorhanden
+# 2. Fallback: Uninstall uninst.exe, if avaiable
 elseif (Test-Path "$envProgramFiles\Fortinet\FortiClient\uninst.exe") {
     Write-Log -Message "Deinstalliere FortiClient per uninst.exe (Fallback)" -Severity 1
     Execute-Process -Path "$envProgramFiles\Fortinet\FortiClient\uninst.exe" -Parameters "/quiet /norestart"
 }
 else {
-    Write-Log -Message "FortiClient konnte nicht gefunden oder deinstalliert werden." -Severity 3
+    Write-Log -Message "FortiClient could not be found or uninstalled." -Severity 3
 }
 
 
